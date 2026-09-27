@@ -1,0 +1,60 @@
+DETAILED EXPLANATION — Concept 11: Binary File Writing and Reading
+
+This program writes a fixed-size record directly to disk as raw
+bytes, then reads those bytes back into a struct, using binary
+file mode instead of text mode.
+
+- Header files: <cstring> provides std::strncpy() for safely
+  copying a C-string into a fixed-size char array. <fstream>
+  provides ifstream/ofstream, now opened with std::ios::binary.
+
+- Why a plain struct with a char array: the struct uses a
+  fixed-size char name[30] instead of std::string. This matters
+  because std::string internally stores a pointer to
+  heap-allocated memory — writing its raw bytes to a file would
+  only save that pointer (meaningless once the program ends), not
+  the actual text. A fixed-size char array stores the characters
+  directly inside the struct, making the whole struct safely
+  copyable as raw bytes.
+
+- strncpy() safety: strncpy(student.name, "Amit Patil",
+  sizeof(student.name) - 1) copies at most 29 characters (leaving
+  one byte free for the null terminator), preventing a buffer
+  overflow if a longer name were used.
+
+- Binary mode: std::ios::binary tells the stream not to perform
+  any text-mode translation (such as converting '\n' to platform-
+  specific line endings on some systems), ensuring the exact bytes
+  written are the exact bytes read back.
+
+- write() and read(): outputFile.write() takes a const char*
+  pointer and a byte count, and copies that many raw bytes from
+  memory into the file. reinterpret_cast<const char*>(&student)
+  reinterpret the struct's address as a byte pointer so write()
+  can treat it as raw memory rather than a typed object.
+  inputFile.read() does the reverse — copying bytes from the file
+  directly into the struct's memory layout.
+
+- sizeof(student): using sizeof() ensures exactly enough bytes for
+  the whole struct (all its fields together) are written/read,
+  regardless of the specific field sizes.
+
+- Scoped blocks { }: each stream is placed in its own block so it
+  goes out of scope and is automatically closed as soon as its
+  work is done — ensuring the write is fully flushed to disk before
+  the file is reopened for reading.
+
+- Verifying the read: if (!inputFile) after read() checks whether
+  the read operation actually succeeded (e.g., the file might be
+  shorter than expected).
+
+Why this matters: binary read()/write() is far more compact and
+faster than text-based storage for fixed-size structured data, and
+this exact struct-based technique is extended in Concept 12 to
+support direct random access to any record in a file of many
+records.
+
+EXPECTED CONSOLE OUTPUT:
+Roll Number: 101
+Name: Amit Patil
+Marks: 85.5
