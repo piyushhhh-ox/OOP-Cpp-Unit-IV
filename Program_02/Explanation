@@ -1,0 +1,47 @@
+DETAILED EXPLANATION — Concept 2: Read a File Line by Line
+
+This program shows how to open an existing text file and read its
+content back, one line at a time, using std::ifstream.
+
+- Header files: <fstream> supplies ifstream, the input file stream
+  class. <string> is needed because std::getline() reads data into
+  a std::string object, not a C-style char array.
+
+- Opening the file: std::ifstream inputFile("message.txt"); opens
+  the file in read mode by default (std::ios::in). Unlike ofstream,
+  opening in read mode does not create or erase the file — if the
+  file does not exist, the stream simply fails to open.
+
+- Error checking: if (!inputFile) again uses the overloaded bool
+  conversion on the stream object. This is essential here because
+  attempting to read from a file that never opened would silently
+  produce no output rather than crashing, making bugs hard to spot
+  without this check.
+
+- Reading line by line: std::getline(inputFile, line) reads
+  characters from the stream into the string "line" until it hits
+  a newline character (which it discards) or reaches end-of-file.
+  It returns the stream itself, which is implicitly converted to
+  bool in the while condition — true while a line was successfully
+  read, false once end-of-file is reached or an error occurs.
+
+- Why not use eof() in the loop condition: A common beginner
+  mistake is writing "while (!inputFile.eof())". This is unsafe
+  because eof() only becomes true AFTER a read attempt has failed
+  past the end of the file, which can cause the last line to be
+  processed twice or an extra empty iteration to run. Using the
+  return value of getline() directly avoids this problem entirely.
+
+- Printing content: Each retrieved line is printed with '\n' added
+  back, since getline() strips the original newline from the file.
+
+- Closing the file: inputFile.close() releases the file handle.
+  For read-only operations this is less critical than for writes
+  (no data loss risk), but it remains good practice, especially if
+  the same file will be reopened later in the program (as happens
+  in Concept 4, the file-copy program).
+
+Why this matters: This getline()-based loop is the standard,
+safe pattern for reading text files line by line in C++, and it
+is reused directly inside later programs such as file copying,
+line/word counting, and student record processing.
