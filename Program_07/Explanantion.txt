@@ -1,0 +1,46 @@
+DETAILED EXPLANATION — Concept 7: Store Student Records in a Text File
+
+This program stores a structured student record (roll number,
+name, marks) into a text file using a delimiter-separated format.
+
+- Header files: <fstream> for ofstream, <limits> for
+  std::numeric_limits (used in cin.ignore()), <string> for storing
+  the name.
+
+- Record format: fields are separated by the pipe character '|',
+  producing lines like "101|Amit Patil|85.5". This delimiter format
+  makes it easy to split the line back into fields later using
+  std::getline() with '|' as the delimiter (as seen in Concept 8).
+
+- Append mode: std::ios::app ensures every new record is added to
+  the end of students.txt without erasing previously saved
+  students, so the file accumulates records across multiple runs.
+
+- Mixing >> and getline(): std::cin >> rollNumber; reads the
+  number but leaves the trailing newline character in the input
+  buffer. If std::getline(std::cin, name) were called directly
+  next, it would immediately read that leftover empty line instead
+  of waiting for the user's name. cin.ignore() discards everything
+  up to and including the next newline, clearing the buffer so
+  getline() can correctly capture the full name (including spaces,
+  which >> could not handle).
+
+- Writing the record: the three fields are concatenated with '|'
+  separators and a trailing '\n', producing one complete record
+  per line in the file.
+
+Why this matters: this delimiter-based record format is reused in
+Concepts 8, 9, 15, and 16 for reading, searching, updating, and
+managing structured records — it's the standard lightweight
+alternative to binary records for human-readable data storage.
+
+SAMPLE INPUT:
+Enter roll number: 101
+Enter name: Amit Patil
+Enter marks: 85.5
+
+EXPECTED CONSOLE OUTPUT:
+Student record saved successfully.
+
+FILE CONTENT (students.txt):
+101|Amit Patil|85.5
