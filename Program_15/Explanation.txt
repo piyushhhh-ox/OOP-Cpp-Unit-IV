@@ -1,0 +1,64 @@
+DETAILED EXPLANATION — Concept 15: Student Record Manager Mini-Project
+
+This program combines everything from Concepts 7–9 into one
+menu-driven application: adding, displaying, searching, and
+updating student records stored in a text file.
+
+- Header files: this program combines every header used across
+  Concepts 7–9 — <cstdio> for remove()/rename(), <fstream> for file
+  streams, <sstream> for line parsing, <limits> for cin.ignore(),
+  and <string>.
+
+- Modular design with functions: instead of one long main(), each
+  feature is its own function (addStudent(), displayStudents(),
+  searchStudent(), updateMarks()), making the program easier to
+  read, test, and extend. main() itself only handles the menu loop
+  and dispatches to these functions.
+
+- addStudent(): directly reuses the pattern from Concept 7 —
+  append mode, cin.ignore() to clear the buffer between >> and
+  getline(), and writing a pipe-delimited record.
+
+- displayStudents(): reuses the stringstream-parsing pattern from
+  Concept 8, but instead of searching, it prints every record as a
+  formatted row using tab characters ('\t') to roughly align
+  columns under the printed header.
+
+- searchStudent(): nearly identical to Concept 8's full program,
+  now wrapped as a standalone function with its own found flag and
+  early break on match.
+
+- updateMarks(): reuses the exact temporary-file-swap workflow
+  from Concept 9 (read original → write to temp → close both →
+  remove original → rename temp), now as a callable function
+  instead of a one-shot program.
+
+- Menu loop in main(): a do-while loop repeatedly displays the
+  menu and reads a choice, using a switch statement to call the
+  matching function. The loop condition while (choice != 0) means
+  the menu keeps reappearing until the user explicitly chooses to
+  exit (0), at which point the loop condition becomes false and the
+  program ends. default handles any invalid numeric input.
+
+Why this matters: this program demonstrates how individual file-
+handling techniques (append-write, parse-search, temp-file-update)
+combine into a complete, interactive, file-backed CRUD (Create,
+Read, Update — no Delete here) application — a realistic small-
+scale use case for everything learned so far.
+
+SAMPLE INTERACTION:
+Student Record Manager
+1. Add Student
+2. Display All Students
+3. Search Student
+4. Update Marks
+0. Exit
+Enter choice: 1
+Enter roll number: 101
+Enter name: Amit Patil
+Enter marks: 85.5
+Record added successfully.
+
+(menu reappears)
+Enter choice: 0
+Exiting program.
