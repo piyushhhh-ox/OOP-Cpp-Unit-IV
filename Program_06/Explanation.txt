@@ -1,0 +1,39 @@
+DETAILED EXPLANATION — Concept 6: Search for a Word in a File
+
+This program searches a text file for occurrences of a
+user-specified word and reports how many times it appears.
+
+- Header files: <fstream> provides ifstream, <string> provides
+  std::string for storing and comparing words.
+
+- Getting the search term: std::cin >> searchWord; reads a single
+  whitespace-delimited token from the user into searchWord.
+
+- Word-by-word reading: inputFile >> word extracts one
+  whitespace-separated token at a time from the file, similar to
+  how cin >> works on console input. This is different from
+  getline() (line-based) or get() (character-based) used in
+  earlier concepts. The while condition is true as long as
+  extraction succeeds.
+
+- Comparing and counting: each extracted word is compared to
+  searchWord using ==, which for std::string performs an exact,
+  case-sensitive character comparison. A match increments count.
+
+- Limitation: because extraction is purely whitespace-based, a
+  word immediately followed by punctuation (e.g., "C++." or
+  "file,") will not equal the plain search term "C++" or "file",
+  so such occurrences are missed. This is called out explicitly in
+  the source material as something a more advanced version should
+  handle by normalizing case and stripping punctuation.
+
+Why this matters: the >> extraction operator is the standard way
+to tokenize a file into words, and this exact-match search pattern
+is the basis for more advanced searching (case-insensitive,
+punctuation-aware) as suggested in the modification task.
+
+SAMPLE INPUT:
+Enter word to search: C++
+
+EXPECTED CONSOLE OUTPUT:
+The word 'C++' occurred 1 time(s).
