@@ -1,0 +1,78 @@
+DETAILED EXPLANATION — Concept 16: Library Record Mini-Project
+
+This program combines object-oriented design with file storage,
+using a Book class to represent library records that are
+serialized to and deserialized from a text file.
+
+- Header files: <fstream> for file streams, <sstream> for parsing,
+  <limits> for cin.ignore(), <string> for text fields.
+
+- The Book class: this is the first concept to wrap file-record
+  data inside a class rather than using loose variables. Private
+  members (bookId, title, author, issued) enforce encapsulation —
+  external code can't directly modify a Book's internals.
+
+- Constructor with member-initializer list: Book(int id,
+  std::string bookTitle, ...) : bookId(id), title(std::move(bookTitle)),
+  ... initializes all members directly in the initializer list
+  (before the constructor body runs) rather than assigning them
+  inside {}. std::move(bookTitle) transfers ownership of the string
+  data from the parameter into the member instead of copying it,
+  which is more efficient. issueStatus has a default value of
+  false, so callers can omit it when adding a brand-new (not yet
+  issued) book.
+
+- toFileRecord(): this member function serializes the object's
+  data into a single pipe-delimited string, converting bookId to
+  text with std::to_string() and issued to "1"/"0". This mirrors
+  the same delimiter format used in Concepts 7–9 and 15, but now
+  the conversion logic lives inside the class itself rather than in
+  standalone code.
+
+- display(): a const member function (it doesn't modify the
+  object) that prints all fields in a human-readable format,
+  converting the boolean issued into "Issued"/"Available" text.
+
+- addBook(): gathers user input (with the same cin.ignore()
+  technique from Concepts 7 and 15 to mix >> and getline() safely),
+  constructs a Book object, then calls toFileRecord() and appends
+  the resulting string as one line to library_books.txt.
+
+- displayBooks(): reads the file line by line, uses stringstream
+  with '|' as the delimiter (same technique as Concept 8) to
+  extract the four fields back out, reconstructs a temporary Book
+  object from them (issuedText == "1" converts the stored text back
+  into a bool), and calls display() on it.
+
+- Menu loop in main(): the same do-while + switch pattern used in
+  Concept 15, offering Add Book, Display Books, and Exit options.
+
+Why this matters: this program shows the natural next step after
+plain delimiter-based records — wrapping the data and its
+conversion logic (toFileRecord() / reconstruction) inside a class,
+which is the standard approach for combining OOP with file-based
+persistence, and a foundation for adding features like issuing,
+returning, and searching books by ID.
+
+SAMPLE INTERACTION:
+Library Record System
+1. Add Book
+2. Display Books
+0. Exit
+Enter choice: 1
+Enter book ID: 501
+Enter title: The C++ Programming Language
+Enter author: Bjarne Stroustrup
+Book added successfully.
+
+(menu reappears)
+Enter choice: 2
+Book ID: 501
+Title: The C++ Programming Language
+Author: Bjarne Stroustrup
+Status: Available
+-------------------------
+
+(menu reappears)
+Enter choice: 0
+Exiting program.
