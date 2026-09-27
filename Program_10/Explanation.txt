@@ -1,0 +1,57 @@
+DETAILED EXPLANATION — Concept 10: File Pointer Navigation
+
+This program demonstrates how to inspect and control the current
+read/write positions within a file using tellg(), tellp(),
+seekg(), and seekp().
+
+- Header file: <fstream> provides std::fstream, which supports
+  both reading and writing through a single stream object — needed
+  here since the program both writes and reads the same file.
+
+- Opening with combined flags: std::ios::in | std::ios::out |
+  std::ios::trunc opens the file for both input and output, and
+  trunc discards any existing content first, giving a clean file
+  to work with.
+
+- Two independent positions: every fstream actually maintains two
+  separate position markers — the "get" position (for reading,
+  controlled by seekg()/tellg()) and the "put" position (for
+  writing, controlled by seekp()/tellp()). They don't automatically
+  stay in sync with each other.
+
+- tellp() after writing: after writing "ABCDE" (5 characters),
+  tellp() reports the output position has advanced to 5, i.e., the
+  next character written would go at index 5.
+
+- flush(): forces any buffered output to be written to the
+  underlying file immediately, ensuring the read operations that
+  follow will see the just-written data.
+
+- seekg(0, std::ios::beg): moves the input (get) position to byte
+  offset 0 relative to std::ios::beg (the beginning of the file).
+  The subsequent get() then reads the character at that position.
+
+- seekg(2, std::ios::beg): jumps the read position directly to
+  index 2 (0-based), skipping ahead without reading the characters
+  in between — this is the key benefit of seekg() over sequential
+  reading.
+
+- seekp(5, std::ios::beg): moves the output (put) position to
+  index 5, which is exactly where the previously written "ABCDE"
+  ends, so the following file << "F"; appends 'F' right after it
+  without overwriting existing characters.
+
+Why this matters: seekg()/seekp()/tellg()/tellp() give random
+access to a file's content instead of only sequential access, which
+becomes essential for binary record manipulation in Concepts 11–12,
+where direct access to a specific fixed-size record is required.
+
+EXPECTED CONSOLE OUTPUT:
+Output position after writing: 5
+First character: A
+Input position after reading one character: 1
+Character at position 2: C
+Navigation completed. Check navigation.txt
+
+EXPECTED FILE CONTENT (navigation.txt):
+ABCDEF
