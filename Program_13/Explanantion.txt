@@ -1,0 +1,50 @@
+DETAILED EXPLANATION — Concept 13: File Error Handling and Stream States
+
+This program demonstrates how to check a file stream's internal
+state explicitly, using is_open(), eof(), bad(), and fail(), to
+distinguish between different kinds of failures.
+
+- Header files: <fstream> for ifstream, <string> for getline().
+
+- is_open() vs. the bool conversion: earlier concepts used
+  if (!inputFile) to check success, which relies on the stream's
+  overloaded bool conversion. This program instead uses
+  inputFile.is_open() directly, which explicitly asks "does this
+  stream currently have a file open?" — a clearer, more explicit
+  check for this specific purpose, since the file genuinely doesn't
+  exist here (missing_file.txt).
+
+- Every stream tracks four state flags:
+  * good() — true only if no error flags are set at all.
+  * eof() — becomes true once a read has gone past the end of the
+    file.
+  * fail() — true after a logical failure, such as expecting a
+    number but finding text, or eof() also sets fail() in most
+    implementations.
+  * bad() — true only for serious, irrecoverable errors (e.g., a
+    hardware or underlying OS failure), separate from ordinary
+    end-of-file conditions.
+
+- Order of checks after the loop: eof() is checked first because
+  reaching end-of-file normally is the expected, successful way for
+  the getline() loop to end. bad() is checked next since it
+  indicates a more serious problem than a simple parsing failure.
+  fail() is checked last as a catch-all logical error. Checking
+  eof() first avoids misreporting a completely normal, successful
+  read as an "error."
+
+- Why this matters here specifically: since missing_file.txt
+  doesn't exist, is_open() returns false immediately, the error
+  messages are printed, and the function returns 1 before ever
+  reaching the getline() loop or the state checks below it — this
+  is the actual behavior demonstrated by this program's expected
+  output.
+
+Why this matters: robust file-handling code should never assume an
+open or read operation succeeded — explicitly checking is_open()
+before use, and interpreting eof()/bad()/fail() correctly afterward,
+prevents silent failures and misleading behavior in larger programs.
+
+EXPECTED CONSOLE OUTPUT (since missing_file.txt does not exist):
+Error: File could not be opened.
+Check whether missing_file.txt exists in the current folder.
