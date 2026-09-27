@@ -1,0 +1,57 @@
+DETAILED EXPLANATION — Concept 14: File Statistics Mini-Project
+
+This program is an extended version of Concept 5, adding vowel,
+digit, and space counting on top of the original line/word/
+character counting, and letting the user choose which file to
+analyze at runtime.
+
+- Header files: <cctype> now also provides isalpha(), isdigit(),
+  and tolower(), in addition to isspace() used in Concept 5.
+
+- isVowel() helper function: this small standalone function takes
+  one character, converts it to lowercase using std::tolower()
+  (wrapped with static_cast<unsigned char> to avoid undefined
+  behavior with negative char values on some platforms), and
+  checks it against the five vowels. Making this a separate
+  function keeps the main() loop readable and the vowel-check
+  logic reusable/testable on its own.
+
+- Dynamic filename input: unlike earlier concepts that hardcoded
+  "message.txt", this program asks the user for a filename with
+  std::getline(std::cin, fileName), allowing any file (including
+  ones with spaces in the name) to be analyzed.
+
+- The core counting loop: this reuses the exact same
+  character-by-character scanning and word-boundary state-flag
+  logic from Concept 5 (inputFile.get(ch), insideWord flag), but
+  adds two more checks inside the same loop:
+  * std::isalpha(ch) && isVowel(ch) — confirms the character is a
+    letter before checking if it's a vowel (avoids miscategorizing
+    symbols), then increments vowels.
+  * std::isdigit(ch) — increments digits for any numeral 0–9.
+  A separate check for ch == ' ' inside the isspace() branch counts
+  only literal space characters (not tabs or newlines) as "spaces."
+
+- Final-line handling: identical technique to Concept 5 — seeking
+  to the last byte to check whether the file ends without a
+  trailing newline, and adjusting the line count accordingly.
+
+Why this matters: this program shows how a single character-
+scanning pass can be extended cheaply to gather many different
+statistics simultaneously, rather than re-reading the file once
+per statistic — an efficient pattern for any text-analysis tool.
+
+SUGGESTED TEST FILE CONTENT:
+C++ File Handling 2026
+Students learn file streams.
+
+EXPECTED CONSOLE OUTPUT (values depend on the exact file content
+used; shown here for the suggested test content as an example):
+
+File Statistics
+Lines: 2
+Words: 7
+Characters: 51
+Vowels: 13
+Digits: 4
+Spaces: 5
