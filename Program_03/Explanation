@@ -1,0 +1,35 @@
+DETAILED EXPLANATION — Concept 3: Append Data to a File
+
+This program adds new content to the end of an existing file
+without erasing what was already there.
+
+- Header file: <fstream> provides ofstream for writing.
+
+- Append mode: std::ios::app is passed as the second argument to
+  the ofstream constructor. This tells the stream to move to the
+  end of the file before every write, and never overwrite existing
+  content — unlike the default output mode used in Concept 1,
+  which truncates the file first.
+
+- Error checking: if (!outputFile) catches cases where the file
+  path is invalid or cannot be accessed for writing.
+
+- Writing: the << operator appends the new line after all
+  previously written content, since the write position is always
+  forced to the end in append mode.
+
+- Closing: close() flushes the buffered write to disk and releases
+  the file handle.
+
+Why this matters: std::ios::app is the standard way to add log
+entries, records, or updates to a file over multiple program runs
+without destroying earlier data.
+
+EXPECTED CONSOLE OUTPUT:
+New line appended successfully.
+
+EXPECTED FILE CONTENT (message.txt, after Concepts 1–3 have run):
+Welcome to C++ File Handling
+This is the first line written to a file.
+Files store data permanently.
+This line was added using append mode.
