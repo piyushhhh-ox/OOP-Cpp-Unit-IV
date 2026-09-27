@@ -1,0 +1,51 @@
+DETAILED EXPLANATION — Concept 9: Update a Student Record Using a Temporary File
+
+This program demonstrates the standard workflow for updating a
+record inside a text file, since text files can't easily be
+edited "in place" when field lengths change.
+
+- Header files: <cstdio> provides std::remove() (delete a file)
+  and std::rename() (rename a file), both C standard library
+  functions usable in C++. <fstream>, <sstream>, and <string>
+  serve the same roles as in Concept 8.
+
+- The temp-file workflow: the original file is opened for reading
+  while a new, separate temporary file is opened for writing.
+  Every record is read from the original; if it matches the target
+  roll number, the updated version is written to the temp file
+  instead of the original data; otherwise the record is copied
+  through unchanged.
+
+- Closing before file operations: inputFile.close() and
+  temporaryFile.close() are called explicitly before any
+  remove()/rename() calls. This is essential — on most operating
+  systems, a file cannot be deleted or renamed while a program
+  still holds it open.
+
+- Cleanup on no match: if the target roll number was never found,
+  the temp file (which is just a duplicate of the original at that
+  point) is deleted with std::remove(), and the original file is
+  left untouched.
+
+- Finalizing the update: if a match was found, std::remove()
+  deletes the old students.txt, then std::rename() renames
+  students_temp.txt to students.txt, effectively replacing the old
+  file with the updated one. Both calls' return values are checked
+  (non-zero indicates failure).
+
+Why this matters: because delimiter-separated text records don't
+have fixed sizes, you can't overwrite a single field in place
+without disturbing the rest of the file — the read-all,
+write-updated-copy, then swap-file-names pattern shown here is the
+standard safe approach, and it's reused in Concept 15's
+updateMarks() function.
+
+SAMPLE INPUT:
+Enter roll number to update: 101
+Enter updated marks: 90
+
+EXPECTED CONSOLE OUTPUT:
+Student marks updated successfully.
+
+FILE CONTENT (students.txt, after update):
+101|Amit Patil|90
