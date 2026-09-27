@@ -1,0 +1,48 @@
+DETAILED EXPLANATION — Concept 8: Read and Search Student Records
+
+This program reads delimiter-separated student records back from
+a file and searches for one matching a given roll number.
+
+- Header files: <fstream> for ifstream, <sstream> for
+  std::stringstream (used to split each line into fields),
+  <string> for text storage.
+
+- Line-based reading: std::getline(inputFile, line) reads one
+  complete record (one line) at a time, the same pattern used in
+  Concept 2.
+
+- Parsing with stringstream: each line is wrapped in a
+  std::stringstream named "record". This lets us call
+  std::getline(record, field, '|') repeatedly — but here the
+  delimiter is '|' instead of the default '\n', so each call
+  extracts exactly one field between pipe characters. The final
+  field (marks) uses getline() without a delimiter argument,
+  which defaults to reading to the end of the line.
+
+- Type conversion: fields are stored as text initially, then
+  converted using std::stoi() (string to int) for the roll number
+  and std::stod() (string to double) for marks, since raw file
+  data is always text regardless of the original data type.
+
+- Searching: each parsed record's roll number is compared against
+  targetRollNumber. On a match, details are printed and break
+  exits the loop immediately rather than scanning the rest of the
+  file unnecessarily.
+
+- Found flag: the boolean "found" is checked after the loop ends
+  to report "not found" only if no match occurred across the
+  entire file.
+
+Why this matters: parsing a line with stringstream and a custom
+delimiter is the standard technique for reading back structured,
+delimiter-separated records — the same approach is reused in
+Concepts 9, 15, and 16.
+
+SAMPLE INPUT:
+Enter roll number to search: 101
+
+EXPECTED CONSOLE OUTPUT:
+Record Found
+Roll Number: 101
+Name: Amit Patil
+Marks: 85.5
