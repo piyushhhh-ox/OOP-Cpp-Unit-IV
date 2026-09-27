@@ -1,0 +1,60 @@
+DETAILED EXPLANATION — Concept 12: Random Access in a Binary File
+
+This program stores multiple fixed-size binary records in a file
+and retrieves any single chosen record directly, without reading
+through the ones before it.
+
+- Header files: same as Concept 11 — <cstring>, <fstream>, plus
+  <iostream> now also for <iostream>'s cin (user input).
+
+- Helper function addRecord(): this reusable function builds a
+  StudentRecord from the given arguments and writes it to the
+  provided output file stream by reference. Passing the stream by
+  reference (std::ofstream&) means the function writes directly
+  into the caller's already-open file, rather than working with a
+  disconnected copy (streams cannot actually be copied at all,
+  which is why passing by reference is required here).
+
+- Writing multiple records: three separate calls to addRecord()
+  append three fixed-size StudentRecord blocks one after another
+  into records.dat, all with std::ios::binary | std::ios::trunc so
+  the file starts empty and pure binary.
+
+- The key idea — fixed record size: because every StudentRecord
+  occupies exactly sizeof(StudentRecord) bytes, records sit back to
+  back in the file at completely predictable positions. This is
+  what makes direct ("random") access possible — unlike text lines,
+  which vary in length and must be scanned sequentially.
+
+- Calculating the offset: offset = (recordNumber - 1) *
+  sizeof(StudentRecord) converts a 1-based record number the user
+  typed into a 0-based byte position in the file. For example,
+  record 2 sits at byte position 1 * sizeof(StudentRecord), i.e.,
+  right after record 1. std::streamoff is the type designed to
+  represent such byte offsets safely.
+
+- seekg(offset, std::ios::beg): moves the read position directly
+  to the start of the desired record, relative to the beginning of
+  the file — skipping over any records before it without reading
+  them at all.
+
+- Reading just one record: inputFile.read() then reads exactly
+  sizeof(selectedStudent) bytes starting from that position,
+  filling in only the requested record.
+
+- Input validation: the check on recordNumber before computing the
+  offset prevents seeking outside the file's actual bounds.
+
+Why this matters: this offset = index * record_size formula is the
+fundamental technique for random access in binary files, allowing
+direct lookup, update, or deletion of any specific record without
+reading the entire file — a major performance advantage over
+text-based sequential searching.
+
+SAMPLE INPUT:
+Enter record number to read (1 to 3): 2
+
+EXPECTED CONSOLE OUTPUT:
+Roll Number: 102
+Name: Neha
+Marks: 91
