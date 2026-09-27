@@ -1,0 +1,43 @@
+DETAILED EXPLANATION — Concept 4: Copy One Text File into Another
+
+This program copies the entire content of one text file into a
+new file, line by line.
+
+- Header files: <fstream> provides both ifstream (to read the
+  source) and ofstream (to create/write the destination) in one
+  program — this is the first concept to use both stream types
+  together. <string> is needed for std::getline().
+
+- Opening two streams: sourceFile is opened in default read mode,
+  and destinationFile is opened in default write mode (which
+  creates it if missing or truncates it if it already exists,
+  same as Concept 1).
+
+- Error checking: both streams are checked independently with
+  if (!sourceFile) and if (!destinationFile), since either one
+  could fail for different reasons (source missing vs. no write
+  permission for destination).
+
+- Copying loop: the same std::getline() pattern from Concept 2 is
+  reused to read one line at a time from sourceFile. Each line is
+  then immediately written into destinationFile using <<, with
+  '\n' added back since getline() strips the newline.
+
+- Why line-based copying: this approach works well for text files
+  and preserves line structure, but is not suitable for binary
+  files (covered later in Concepts 11–12), where raw byte copying
+  is needed instead.
+
+Why this matters: this read-then-write pattern (input stream in,
+output stream out, one line at a time) is the foundation for many
+file-processing tasks, including filtering, transforming, or
+merging file content.
+
+EXPECTED CONSOLE OUTPUT:
+File copied successfully to message_copy.txt
+
+EXPECTED FILE CONTENT (message_copy.txt):
+Welcome to C++ File Handling
+This is the first line written to a file.
+Files store data permanently.
+This line was added using append mode.
